@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".TranslatorFragment">
+
+
+    <EditText
+        android:id="@+id/edit_enter_text"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/edit_text_height"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/shape"
+        android:ems="10"
+        android:gravity="start|top"
+        android:hint="@string/title_edit_text"
+        android:inputType="textMultiLine"
+        android:textSize="@dimen/edit_text_size"
+        android:padding="5dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/spinner_languages" />
+
+
+    <EditText
+        android:id="@+id/edit_translation_text"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/edit_text_height"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/shape"
+        android:ems="10"
+        android:gravity="start|top"
+        android:hint="@string/title_edit_translation"
+        android:inputType="textMultiLine"
+        android:textSize="@dimen/edit_text_size"
+        android:padding="5dp"
+        app:layout_constraintEnd_toEndOf="@+id/edit_enter_text"
+        app:layout_constraintStart_toStartOf="@+id/edit_enter_text"
+        app:layout_constraintTop_toBottomOf="@+id/edit_enter_text" />
+
+    <Button
+        android:id="@+id/button_translate"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/title_button_translate"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/edit_translation_text" />
+
+    <Button
+        android:id="@+id/button_save_translation"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:text="@string/title_button_save"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/button_translate"
+        app:layout_constraintTop_toBottomOf="@+id/edit_translation_text"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <Spinner
+        android:id="@+id/spinner_languages"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:spinnerMode="dialog"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</android.support.constraint.ConstraintLayout>
