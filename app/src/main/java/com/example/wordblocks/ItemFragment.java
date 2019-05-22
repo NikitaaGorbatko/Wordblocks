@@ -11,27 +11,32 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.wordblocks.dummy.DummyContent;
-import com.example.wordblocks.dummy.DummyContent.DummyItem;
+import com.example.wordblocks.dummy.DummyItem;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ItemFragment extends Fragment {
-
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
+    private static final String ARG_DUMMY_ITEMS = "dummy";
     // TODO: Customize parameters
     private int mColumnCount = 2;
+    private ArrayList<DummyItem> localDummyItems;
     private OnListFragmentInteractionListener mListener;
+
 
     public ItemFragment() {
     }
 
     // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
-    public static ItemFragment newInstance(int columnCount) {
+    public static ItemFragment newInstance(int columnCount, ArrayList<DummyItem> dummyItems) {
         ItemFragment fragment = new ItemFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_COLUMN_COUNT, columnCount);
+        args.putSerializable(ARG_DUMMY_ITEMS, (Serializable) dummyItems);
         fragment.setArguments(args);
         return fragment;
     }
@@ -41,6 +46,7 @@ public class ItemFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
+            localDummyItems = (ArrayList<DummyItem>) getArguments().getSerializable(ARG_DUMMY_ITEMS);
         }
     }
 
@@ -55,11 +61,10 @@ public class ItemFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new MyItemRecyclerViewAdapter(DummyContent.ITEMS, mListener));
+            recyclerView.setAdapter(new MyItemRecyclerViewAdapter(localDummyItems, mListener));
         }
         return view;
     }
-
 
     @Override
     public void onAttach(Context context) {
@@ -67,8 +72,7 @@ public class ItemFragment extends Fragment {
         if (context instanceof OnListFragmentInteractionListener) {
             mListener = (OnListFragmentInteractionListener) context;
         } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnListFragmentInteractionListener");
+            throw new RuntimeException(context.toString() + " must implement OnListFragmentInteractionListener");
         }
     }
 

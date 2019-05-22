@@ -1,7 +1,5 @@
 package com.example.wordblocks;
 
-import android.arch.lifecycle.ViewModel;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.BottomNavigationView;
@@ -9,14 +7,11 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
-
 import com.example.wordblocks.dummy.DummyContent;
+import com.example.wordblocks.dummy.DummyItem;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -27,13 +22,28 @@ import java.io.Writer;
 import java.net.Socket;
 import java.util.ArrayList;
 
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
-
-public class MainActivity extends AppCompatActivity implements TranslatorFragment.OnFragmentInteractionListener, ItemFragment.OnListFragmentInteractionListener {
-    private RetrieveFeedTask retrieveFeedTask;
+public class MainActivity extends AppCompatActivity implements ItemFragment.OnListFragmentInteractionListener {
+    private GetLanguagesTask retrieveFeedTask;
     private ArrayList<Character> characterArrayList = new ArrayList<>();
-    private TranslatorFragment.OnFragmentInteractionListener onFragmentInteractionListener;
+    //private TranslatorFragment.OnFragmentInteractionListener onFragmentInteractionListener;
+    private Fragment selectedFragment;
+    String string = "";
+    TranslatorFragment f;
+
+    OnDownloaded callback;
+
+    public void setOnDownloadedListener(OnDownloaded callback) {
+        this.callback = callback;
+    }
+
+    // This interface can be implemented by the Activity, parent Fragment,
+    // or a separate test implementation.
+    public interface OnDownloaded {
+        void OnDownloaded(String languages);
+    }
+
+
+
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -43,15 +53,22 @@ public class MainActivity extends AppCompatActivity implements TranslatorFragmen
             boolean done = false;
             switch (item.getItemId()) {
                 case R.id.navigation_blocks_list:
-                    selectedFragment = ItemFragment.newInstance(2);
+                    ArrayList<DummyItem> arrayList = new ArrayList<>();
+                    selectedFragment = ItemFragment.newInstance(2, arrayList);
                     done = true;
                     break;
                 case R.id.navigation_manager:
-                    selectedFragment = ItemFragment.newInstance(3);
+                    //selectedFragment = ItemFragment.newInstance(3);
                     done = true;
                     break;
                 case R.id.navigation_translator:
-                    selectedFragment = TranslatorFragment.newInstance("asxdgbn","sdfasdfasdfad");
+                    selectedFragment = TranslatorFragment.newInstance(string, "sadf");
+                    retrieveFeedTask = new GetLanguagesTask();
+                    retrieveFeedTask.execute("hello");
+                    f = (TranslatorFragment)selectedFragment;
+                    //retrieveFeedTask.
+
+                    //Log.d("TAG", "\n\n\n\n\n" + string + "\n\n\n\n\n\n");
                     done = true;
                     break;
             }
@@ -63,68 +80,84 @@ public class MainActivity extends AppCompatActivity implements TranslatorFragmen
     };
 
 
-    @Override
-    public void onFragmentInteraction(Uri uri) {
-    }
+    /*@Override
+    public void onFragmentInteraction(String string) {
+        Toast.makeText(this, string, Toast.LENGTH_LONG).show();
+    }*/
 
     @Override
-    public void onListFragmentInteraction(DummyContent.DummyItem item) {
-        Toast.makeText(this, item.content, Toast.LENGTH_LONG).show();
+    public void onListFragmentInteraction(DummyItem item) {
+        Toast.makeText(this, item.name, Toast.LENGTH_LONG).show();
     }
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        //translatorFragment = (TranslatorFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_translator);
         BottomNavigationView navView = findViewById(R.id.nav_view);
         navView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-        onFragmentInteractionListener = this;
 
-        Thread thread = new Thread(new Runnable() {
-            private Writer clientWriter;
-            private BufferedReader clientReader;
-            @Override
-            public void run() {
-                try {
-                    Socket clientSocket = new Socket("192.168.0.103", 4004);
-                    clientWriter = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
-                    clientReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-                    clientWriter.write("hello");
-                    clientWriter.flush();
-                    String inputLine;
-                    while ((inputLine = clientReader.readLine()) != null) {
-
-                    }
-
-                } catch (IOException ex) {
-
-                }
-            }
-        });
-        thread.start();
-        //retrieveFeedTask = new RetrieveFeedTask();
-        //retrieveFeedTask.execute("hello");
     }
 
-    class RetrieveFeedTask extends AsyncTask<String, Void, Void> {
+
+
+    class GetLanguagesTask extends AsyncTask<String, Void, String> {
         private Writer clientWriter;
         private BufferedReader clientReader;
 
         @Override
-        protected Void doInBackground(String... strings) {
+        protected String doInBackground(String... strings) {
+            String token = "", inputLine;
             try {
                 Socket clientSocket = new Socket("192.168.0.103", 4004);
-                clientWriter = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
                 clientReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-                if (strings.length > 0) {
-                    clientWriter.write(strings[strings.length - 1]);
-                    clientWriter.flush();
+                while ((inputLine = clientReader.readLine()) != null) {
+                    token += "\n" + inputLine;
                 }
+                clientReader.close();
             } catch (IOException ex) {
                 Log.d("LOG", "gfcjgchghg\n\n\n" + ex.getMessage());
             }
-            return null;
+            return token;
+        }
+
+        @Override
+        protected void onPostExecute(String strings) {
+            super.onPostExecute(strings);
+            f.setSpinnerList(strings);
+        }
+    }
+
+
+    class GetWordBlocksTask extends AsyncTask<String, Void, String> {
+        private BufferedReader clientReader;
+        private BufferedWriter clientWriter;
+
+        @Override
+        protected String doInBackground(String... strings) {
+            String token = "", inputLine = "";
+            try {
+                Socket clientSocket = new Socket("192.168.0.103", 4004);
+                clientReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+                clientWriter = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
+                clientWriter.write(2);
+                clientWriter.close();
+                while ((inputLine = clientReader.readLine()) != null) {
+                    token += "\n" + inputLine;
+                }
+                clientReader.close();
+            } catch (IOException ex) {
+                Log.d("LOG", "gfcjgchghg\n\n\n" + ex.getMessage());
+            }
+            return token;
+        }
+
+        @Override
+        protected void onPostExecute(String strings) {
+            super.onPostExecute(strings);
+            f.setSpinnerList(strings);
         }
     }
 

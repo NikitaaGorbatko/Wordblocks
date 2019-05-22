@@ -12,7 +12,11 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
 import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -20,14 +24,6 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link TranslatorFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link TranslatorFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class TranslatorFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
@@ -35,22 +31,39 @@ public class TranslatorFragment extends Fragment {
     private Button translateButton, saveTranslationButton;
     private YandexApi yandexApi;
     private Retrofit retrofit;
+    private Spinner spinner;
+    private Context context;
+
 
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-    private OnFragmentInteractionListener mListener;
+    //private OnFragmentInteractionListener mListener;
     public TranslatorFragment() {
         // Required empty public constructor
     }
 
-    public static TranslatorFragment newInstance(String word, String param2) {
+
+
+    public static TranslatorFragment newInstance(String word, String gsd) {
         TranslatorFragment fragment = new TranslatorFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, word);
-        args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
+    }
+
+    public void setSpinnerList(String list) {
+        List<String> languagesList = new ArrayList<String>();
+        for (String token : list.split("\n")) {
+            if (!token.equals("")) {
+                languagesList.add(token.toLowerCase());
+            }
+        }
+
+        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, languagesList);
+        spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down vieww
+        spinner.setAdapter(spinnerArrayAdapter);
     }
 
     @Override
@@ -58,31 +71,22 @@ public class TranslatorFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
         }
         retrofit = new Retrofit.Builder()
                 .baseUrl("https://translate.yandex.net/api/v1.5/tr.json/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         yandexApi = retrofit.create(YandexApi.class);
-        /*
-        SharedViewModel model;
-        model = ViewModelProvider.of(getActivity()).get(SharedViewModel.class);
-        itemSelector.setOnClickListener(item -> {
-            model.select(item);
-        });*/
-
-
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View fragmentView = inflater.inflate(R.layout.fragment_translator, container, false);
-        Context context = inflater.getContext();
-        Spinner spinner = fragmentView.findViewById(R.id.spinner_languages);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(context, R.array.languages_array, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
+        context = inflater.getContext();
+
+
+        spinner = fragmentView.findViewById(R.id.spinner_languages);
         wordEditText = fragmentView.findViewById(R.id.edit_enter_text);
         translationEditText = fragmentView.findViewById(R.id.edit_translation_text);
         translateButton = fragmentView.findViewById(R.id.button_translate);
@@ -91,34 +95,29 @@ public class TranslatorFragment extends Fragment {
         return fragmentView;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
+
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
+        /*if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
-        }
+        }*/
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
+        //mListener = null;
     }
 
-    public interface OnFragmentInteractionListener {
+   /* public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
-    }
+        void onFragmentInteraction(String string);
+    }*/
 
     class OnTranslateClick implements View.OnClickListener {
         private Context context;
