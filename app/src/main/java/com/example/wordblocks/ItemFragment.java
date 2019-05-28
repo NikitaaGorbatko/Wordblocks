@@ -9,10 +9,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.example.wordblocks.dummy.DummyContent;
 import com.example.wordblocks.dummy.DummyItem;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +19,7 @@ public class ItemFragment extends Fragment {
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
     private static final String ARG_DUMMY_ITEMS = "dummy";
+    RecyclerView recyclerView;
     // TODO: Customize parameters
     private int mColumnCount = 2;
     private ArrayList<DummyItem> localDummyItems;
@@ -36,7 +35,7 @@ public class ItemFragment extends Fragment {
         ItemFragment fragment = new ItemFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_COLUMN_COUNT, columnCount);
-        args.putSerializable(ARG_DUMMY_ITEMS, (Serializable) dummyItems);
+        args.putSerializable(ARG_DUMMY_ITEMS, dummyItems);
         fragment.setArguments(args);
         return fragment;
     }
@@ -55,7 +54,8 @@ public class ItemFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_item_list, container, false);
         if (view instanceof RecyclerView) {
             Context context = view.getContext();
-            RecyclerView recyclerView = (RecyclerView) view;
+            //RecyclerView recyclerView = (RecyclerView) view;
+            recyclerView = (RecyclerView) view;
             if (mColumnCount <= 1) {
                 recyclerView.setLayoutManager(new LinearLayoutManager(context));
             } else {
@@ -80,6 +80,10 @@ public class ItemFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    public void setDummyItems(ArrayList<DummyItem> dummyItems) {
+        recyclerView.setAdapter(new MyItemRecyclerViewAdapter(dummyItems, mListener));
     }
 
     public interface OnListFragmentInteractionListener {

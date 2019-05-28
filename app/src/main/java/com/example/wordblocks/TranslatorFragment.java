@@ -1,8 +1,6 @@
 package com.example.wordblocks;
 
-import android.arch.lifecycle.ViewModelProvider;
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -12,12 +10,9 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
 import android.widget.Toast;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -45,12 +40,10 @@ public class TranslatorFragment extends Fragment {
 
 
 
-    public static TranslatorFragment newInstance(String word, String gsd) {
-        TranslatorFragment fragment = new TranslatorFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, word);
-        fragment.setArguments(args);
-        return fragment;
+    public static TranslatorFragment newInstance() {
+        //TranslatorFragment fragment = new TranslatorFragment();
+        //fragment.setArguments(new Bundle());
+        return new TranslatorFragment();
     }
 
     public void setSpinnerList(String list) {
@@ -61,7 +54,7 @@ public class TranslatorFragment extends Fragment {
             }
         }
 
-        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, languagesList);
+        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, languagesList);
         spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down vieww
         spinner.setAdapter(spinnerArrayAdapter);
     }
@@ -84,7 +77,6 @@ public class TranslatorFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View fragmentView = inflater.inflate(R.layout.fragment_translator, container, false);
         context = inflater.getContext();
-
 
         spinner = fragmentView.findViewById(R.id.spinner_languages);
         wordEditText = fragmentView.findViewById(R.id.edit_enter_text);

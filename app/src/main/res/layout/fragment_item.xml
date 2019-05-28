@@ -16,23 +16,20 @@
             android:id="@+id/name_view"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/text_margin"
             android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
-            android:layout_marginBottom="715dp"
             android:textAppearance="?attr/textAppearanceListItem"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/description_view"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/text_margin"
             android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:textAppearance="?attr/textAppearanceListItem"
             app:layout_constraintEnd_toEndOf="parent"
@@ -40,11 +37,24 @@
             app:layout_constraintTop_toBottomOf="@+id/name_view" />
 
         <TextView
+            android:id="@+id/language_view"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:textAppearance="?attr/textAppearanceListItem"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.51"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/description_view" />
+
+        <TextView
             android:id="@+id/cost_view"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/text_margin"
             android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
             android:textAppearance="?attr/textAppearanceListItem"
@@ -54,19 +64,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/language_view"
             app:layout_constraintVertical_bias="0.0" />
-
-        <TextView
-            android:id="@+id/language_view"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/text_margin"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            android:textAppearance="?attr/textAppearanceListItem"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/description_view" />
 
     </android.support.constraint.ConstraintLayout>
 </android.support.v7.widget.CardView>

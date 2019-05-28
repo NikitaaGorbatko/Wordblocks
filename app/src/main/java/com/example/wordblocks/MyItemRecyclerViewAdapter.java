@@ -1,5 +1,6 @@
 package com.example.wordblocks;
 
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -7,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import com.example.wordblocks.ItemFragment.OnListFragmentInteractionListener;
 import com.example.wordblocks.dummy.DummyItem;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,18 +21,18 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.fragment_item, parent, false);
+    @NonNull
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_item, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, int position) {
+    public void onBindViewHolder(final @NonNull ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
         holder.nameView.setText(mValues.get(position).id);
         holder.descriptionView.setText(mValues.get(position).name);
-        holder.costView.setText(mValues.get(position).cost);
+        //holder.costView.setText(mValues.get(position).cost);
         holder.languageView.setText(mValues.get(position).language);
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
