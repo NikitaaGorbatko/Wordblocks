@@ -9,7 +9,6 @@ import android.widget.TextView;
 import com.example.wordblocks.ItemFragment.OnListFragmentInteractionListener;
 import com.example.wordblocks.dummy.DummyItem;
 import java.util.ArrayList;
-import java.util.List;
 
 public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecyclerViewAdapter.ViewHolder> {
     private final ArrayList<DummyItem> mValues;
@@ -30,10 +29,11 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
     @Override
     public void onBindViewHolder(final @NonNull ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
-        holder.nameView.setText(mValues.get(position).id);
-        holder.descriptionView.setText(mValues.get(position).name);
-        //holder.costView.setText(mValues.get(position).cost);
+        holder.nameView.setText(mValues.get(position).name);
+        holder.descriptionView.setText(mValues.get(position).description);
+        holder.topicView.setText(mValues.get(position).topic);
         holder.languageView.setText(mValues.get(position).language);
+        holder.costView.setText(mValues.get(position).cost + "");
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -53,16 +53,18 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
-        public final TextView nameView, descriptionView, costView, languageView;
+        public final TextView nameView, descriptionView, costView, languageView, topicView;
         public DummyItem mItem;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            nameView = (TextView) view.findViewById(R.id.name_view);
-            descriptionView = (TextView) view.findViewById(R.id.description_view);
-            costView = (TextView) view.findViewById(R.id.cost_view);
-            languageView = (TextView) view.findViewById(R.id.language_view);
+            nameView = view.findViewById(R.id.name_view);
+            descriptionView = view.findViewById(R.id.description_view);
+            topicView = view.findViewById(R.id.topic_view);
+            languageView = view.findViewById(R.id.language_view);
+            costView = view.findViewById(R.id.cost_view);
+
         }
 
         @Override

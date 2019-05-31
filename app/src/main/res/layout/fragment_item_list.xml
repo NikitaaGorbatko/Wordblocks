@@ -6,7 +6,6 @@
     android:name="com.example.wordblocks.ItemFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="4dp"
     app:layoutManager="LinearLayoutManager"
     tools:context=".ItemFragment"
     tools:listitem="@layout/fragment_item" />

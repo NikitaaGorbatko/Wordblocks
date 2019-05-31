@@ -10,13 +10,10 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
-
 import com.example.wordblocks.dummy.DummyItem;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -70,7 +67,7 @@ public class MainActivity extends AppCompatActivity implements ItemFragment.OnLi
 
     @Override
     public void onListFragmentInteraction(DummyItem item) {
-        Toast.makeText(this, item.name, Toast.LENGTH_LONG).show();
+        Toast.makeText(this, item.data, Toast.LENGTH_LONG).show();
     }
 
 
@@ -125,6 +122,7 @@ public class MainActivity extends AppCompatActivity implements ItemFragment.OnLi
         private static final String ID_KEY = "id";
         private static final String NAME_KEY = "name";
         private static final String DESCRIPTION_KEY = "description";
+        private static final String TOPIC_KEY = "topic";
         private static final String LANGUAGE_KEY = "language";
         private static final String COST_KEY = "cost";
         private static final String DATA_KEY = "data";
@@ -142,7 +140,6 @@ public class MainActivity extends AppCompatActivity implements ItemFragment.OnLi
                 clientWriter.write(SEND_BLOCKS);
                 clientWriter.flush();
                 //clientWriter.close();
-                String[] arrf = {"",""};
                 while ((inputLine = clientReader.readLine()) != null) {
                     token += "\n" + inputLine;
                 }
@@ -151,13 +148,13 @@ public class MainActivity extends AppCompatActivity implements ItemFragment.OnLi
                     JSONArray j = new JSONArray(token);
                     for(int i = 0; i < j.length(); i++) {
                         JSONObject localDummyJsonObject = j.getJSONObject(i);
-                        String[] arr = {"",""};//zaglushka
                         dummyItems.add(new DummyItem(localDummyJsonObject.getString(ID_KEY),
                                 localDummyJsonObject.getString(NAME_KEY),
                                 localDummyJsonObject.getString(DESCRIPTION_KEY),
+                                localDummyJsonObject.getString(TOPIC_KEY),
                                 localDummyJsonObject.getInt(COST_KEY),
                                 localDummyJsonObject.getString(LANGUAGE_KEY),
-                                arr));
+                                localDummyJsonObject.getString(DATA_KEY)));
                     }
                 } catch (JSONException ex) {
                     ex.printStackTrace();
@@ -172,7 +169,7 @@ public class MainActivity extends AppCompatActivity implements ItemFragment.OnLi
         @Override
         protected void onPostExecute(ArrayList<DummyItem> dummyItems) {
             super.onPostExecute(dummyItems);
-            selectedFragment = ItemFragment.newInstance(2, dummyItems);
+            selectedFragment = ItemFragment.newInstance(1, dummyItems);
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.replace(R.id.frame_layout, selectedFragment);
             transaction.commit();

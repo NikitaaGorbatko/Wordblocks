@@ -13,7 +13,7 @@ public class DummyContent {
     DummyContent(ArrayList<DummyItem> dummyItemArrayList)  {
         for (int i = 1; i <= COUNT; i++) {
             String[] as = {"f","f"};
-            addItem(createDummyItem(i + "", "asdf", " fff", 2, "fff", as));
+            //addItem(createDummyItem(i + "", "asdf", " fff", 2, "fff", as));
         }
     }
 
@@ -22,8 +22,8 @@ public class DummyContent {
         ITEM_MAP.put(item.id, item);
     }
 
-    private static DummyItem createDummyItem(String id, String name, String description, int cost, String language, String[] data) {
-        return new DummyItem(id, name, description, cost, language, data);
+    private static DummyItem createDummyItem(String id, String name, String description, String topic, int cost, String language, String data) {
+        return new DummyItem(id, name, description, topic, cost, language, data);
     }
 
     private static String makeDetails(int position) {
