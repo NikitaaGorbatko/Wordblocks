@@ -7,16 +7,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import com.example.wordblocks.ItemFragment.OnListFragmentInteractionListener;
-import com.example.wordblocks.dummy.DummyItem;
 import java.util.ArrayList;
 
-public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecyclerViewAdapter.ViewHolder> {
-    private final ArrayList<DummyItem> mValues;
-    private final OnListFragmentInteractionListener mListener;
+public class WordBlockRecyclerViewAdapter extends RecyclerView.Adapter<WordBlockRecyclerViewAdapter.ViewHolder> {
+    private final ArrayList<WordBlock> wordBlocksArrayList;
+    private final OnListFragmentInteractionListener fragmentInteractionListener;
 
-    public MyItemRecyclerViewAdapter(ArrayList<DummyItem> items, OnListFragmentInteractionListener listener) {
-        mValues = items;
-        mListener = listener;
+    public WordBlockRecyclerViewAdapter(ArrayList<WordBlock> blocks, OnListFragmentInteractionListener listener) {
+        wordBlocksArrayList = blocks;
+        fragmentInteractionListener = listener;
     }
 
     @Override
@@ -28,19 +27,19 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
 
     @Override
     public void onBindViewHolder(final @NonNull ViewHolder holder, int position) {
-        holder.mItem = mValues.get(position);
-        holder.nameView.setText(mValues.get(position).name);
-        holder.descriptionView.setText(mValues.get(position).description);
-        holder.topicView.setText(mValues.get(position).topic);
-        holder.languageView.setText(mValues.get(position).language);
-        holder.costView.setText(mValues.get(position).cost + "");
-        holder.mView.setOnClickListener(new View.OnClickListener() {
+        WordBlock wBlock = holder.wordBlockHolderItem = wordBlocksArrayList.get(position);
+        holder.nameView.setText(wBlock.name);
+        holder.descriptionView.setText(wBlock.description);
+        holder.topicView.setText(wBlock.topic);
+        holder.languageView.setText(wBlock.language);
+        holder.costView.setText(wBlock.cost + "");
+        holder.viewHolderView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (null != mListener) {
+                if (null != fragmentInteractionListener) {
                     // Notify the active callbacks interface (the activity, if the
                     // fragment is attached to one) that an item has been selected.
-                    mListener.onListFragmentInteraction(holder.mItem);
+                    fragmentInteractionListener.onListFragmentInteraction(holder.wordBlockHolderItem);
                 }
             }
         });
@@ -48,23 +47,22 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
 
     @Override
     public int getItemCount() {
-        return mValues.size();
+        return wordBlocksArrayList.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        public final View mView;
+        public final View viewHolderView;
         public final TextView nameView, descriptionView, costView, languageView, topicView;
-        public DummyItem mItem;
+        public WordBlock wordBlockHolderItem;
 
         public ViewHolder(View view) {
             super(view);
-            mView = view;
+            viewHolderView = view;
             nameView = view.findViewById(R.id.name_view);
             descriptionView = view.findViewById(R.id.description_view);
             topicView = view.findViewById(R.id.topic_view);
             languageView = view.findViewById(R.id.language_view);
             costView = view.findViewById(R.id.cost_view);
-
         }
 
         @Override

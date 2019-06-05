@@ -2,24 +2,19 @@ package com.example.wordblocks;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import com.example.wordblocks.dummy.DummyItem;
 import java.util.ArrayList;
 
 public class ItemFragment extends Fragment {
-    // TODO: Customize parameter argument names
-    private static final String ARG_COLUMN_COUNT = "column-count";
-    private static final String ARG_DUMMY_ITEMS = "dummy";
-    RecyclerView recyclerView;
-    // TODO: Customize parameters
-    private int mColumnCount = 2;
-    private ArrayList<DummyItem> localDummyItems;
+    private static final String ARG_BLOCK_ITEMS = "blocks";
+    private RecyclerView recyclerView;
+    private ArrayList<WordBlock> localWordBlocks;
     private OnListFragmentInteractionListener mListener;
 
 
@@ -28,11 +23,10 @@ public class ItemFragment extends Fragment {
 
     // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
-    public static ItemFragment newInstance(int columnCount, ArrayList<DummyItem> dummyItems) {
+    public static ItemFragment newInstance(int columnCount, ArrayList<WordBlock> wordBlocks) {
         ItemFragment fragment = new ItemFragment();
         Bundle args = new Bundle();
-        args.putInt(ARG_COLUMN_COUNT, columnCount);
-        args.putSerializable(ARG_DUMMY_ITEMS, dummyItems);
+        args.putSerializable(ARG_BLOCK_ITEMS, wordBlocks);
         fragment.setArguments(args);
         return fragment;
     }
@@ -40,25 +34,17 @@ public class ItemFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
-            localDummyItems = (ArrayList<DummyItem>) getArguments().getSerializable(ARG_DUMMY_ITEMS);
-        }
+        if (getArguments() != null)
+            localWordBlocks = (ArrayList<WordBlock>) getArguments().getSerializable(ARG_BLOCK_ITEMS);
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_item_list, container, false);
         if (view instanceof RecyclerView) {
-            Context context = view.getContext();
-            //RecyclerView recyclerView = (RecyclerView) view;
             recyclerView = (RecyclerView) view;
-            if (mColumnCount <= 1) {
-                recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            } else {
-                recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
-            }
-            recyclerView.setAdapter(new MyItemRecyclerViewAdapter(localDummyItems, mListener));
+            recyclerView.setLayoutManager(new GridLayoutManager(view.getContext(), 2));
+            recyclerView.setAdapter(new WordBlockRecyclerViewAdapter(localWordBlocks, mListener));
         }
         return view;
     }
@@ -79,12 +65,12 @@ public class ItemFragment extends Fragment {
         mListener = null;
     }
 
-    public void setDummyItems(ArrayList<DummyItem> dummyItems) {
-        recyclerView.setAdapter(new MyItemRecyclerViewAdapter(dummyItems, mListener));
+    public void setDummyItems(ArrayList<WordBlock> wordBlocks) {
+        recyclerView.setAdapter(new WordBlockRecyclerViewAdapter(wordBlocks, mListener));
     }
 
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onListFragmentInteraction(DummyItem item);
+        void onListFragmentInteraction(WordBlock item);
     }
 }

@@ -46,16 +46,9 @@ public class TranslatorFragment extends Fragment {
         return new TranslatorFragment();
     }
 
-    public void setSpinnerList(String list) {
-        List<String> languagesList = new ArrayList<String>();
-        for (String token : list.split("\n")) {
-            if (!token.equals("")) {
-                languagesList.add(token.toLowerCase());
-            }
-        }
-
+    public void setSpinnerList(ArrayList<String> languagesList) {
         ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, languagesList);
-        spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down vieww
+        spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(spinnerArrayAdapter);
     }
 
@@ -77,7 +70,6 @@ public class TranslatorFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View fragmentView = inflater.inflate(R.layout.fragment_translator, container, false);
         context = inflater.getContext();
-
         spinner = fragmentView.findViewById(R.id.spinner_languages);
         wordEditText = fragmentView.findViewById(R.id.edit_enter_text);
         translationEditText = fragmentView.findViewById(R.id.edit_translation_text);
