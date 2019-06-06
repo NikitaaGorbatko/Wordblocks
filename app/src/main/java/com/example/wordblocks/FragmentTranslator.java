@@ -12,14 +12,14 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 import java.util.ArrayList;
-import java.util.List;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class TranslatorFragment extends Fragment {
+public class FragmentTranslator extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     private EditText wordEditText, translationEditText;
@@ -34,16 +34,16 @@ public class TranslatorFragment extends Fragment {
     private String mParam1;
     private String mParam2;
     //private OnFragmentInteractionListener mListener;
-    public TranslatorFragment() {
+    public FragmentTranslator() {
         // Required empty public constructor
     }
 
 
 
-    public static TranslatorFragment newInstance() {
-        //TranslatorFragment fragment = new TranslatorFragment();
+    public static FragmentTranslator newInstance() {
+        //FragmentTranslator fragment = new FragmentTranslator();
         //fragment.setArguments(new Bundle());
-        return new TranslatorFragment();
+        return new FragmentTranslator();
     }
 
     public void setSpinnerList(ArrayList<String> languagesList) {

@@ -1,12 +1,20 @@
 package com.example.wordblocks;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -21,23 +29,20 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.List;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class MainActivity extends AppCompatActivity implements ItemFragment.OnListFragmentInteractionListener, BottomNavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements FragmentWordBlocks.OnListFragmentInteractionListener, BottomNavigationView.OnNavigationItemSelectedListener {
     private GetLanguagesTask retrieveFeedTask;
     private static final int SEND_LANGUAGES = 3;
     private static final int SEND_TOPICS = 2;
     private static final int SEND_BLOCKS = 1;
     private Fragment selectedFragment;
-    private TranslatorFragment translatorFragment;
+    private FragmentTranslator translatorFragment;
     private BufferedWriter clientWriter;
     private BufferedReader clientReader;
     private Socket clientSocket;
@@ -47,8 +52,9 @@ public class MainActivity extends AppCompatActivity implements ItemFragment.OnLi
     private Retrofit retrofit;
     public static final String TRANSLATIONS = "translations";
     public static final String TRANSLATED = "translated";
-    StringBuilder stringBuilder = new StringBuilder();
-    Intent intent;
+    private StringBuilder stringBuilder = new StringBuilder();
+    private Intent intent;
+    private MyReceiver receiver;
 
 
     @Override
@@ -57,9 +63,13 @@ public class MainActivity extends AppCompatActivity implements ItemFragment.OnLi
         setContentView(R.layout.activity_main);
         BottomNavigationView navView = findViewById(R.id.nav_view);
         navView.setOnNavigationItemSelectedListener(this);
+        receiver = new MyReceiver();
+
 
         DatabaseHandler db = new DatabaseHandler(this);
         SQLiteDatabase sqlDb = db.getWritableDatabase();
+        //loclalDB is required
+        //Broadcast notificator is reguired
 
         retrofit = new Retrofit.Builder()
                 .baseUrl("https://translate.yandex.net/api/v1.5/tr.json/")
@@ -68,7 +78,26 @@ public class MainActivity extends AppCompatActivity implements ItemFragment.OnLi
         yandexApi = retrofit.create(YandexApi.class);
         intent = new Intent(this, WordsActivity.class);
 
+        createNotificationChannel();
     }
+
+
+    private void createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            //CharSequence name = getString(R.string.channel_name);
+            //String description = getString(R.string.channel_description);
+            //int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel("channel1", "name", NotificationManager.IMPORTANCE_DEFAULT);
+            channel.setDescription("");
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
+
 
 
     @Override
@@ -82,11 +111,33 @@ public class MainActivity extends AppCompatActivity implements ItemFragment.OnLi
                 done = true;
                 break;
             case R.id.navigation_manager:
+                Intent intent = new Intent(this, MainActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+                PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
+
+                NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "channel1")
+                        .setSmallIcon(R.drawable.ic_dashboard_black_24dp)
+                        .setContentTitle("Words for today:")
+                        //.setContentText("Hello World!\nsdgdgf\nsfdgsdfgsd\nsdfgsdfg\ndfgsd")
+                        .setStyle(new NotificationCompat.BigTextStyle().bigText("Much \nlonger \ntext that \ncannot \nfit one \nline..."))
+                        .setWhen(3000)
+                        //.setPriority(NotificationCompat.PRIORITY_HIGH)
+                        // Set the intent that will fire when the user taps the notification
+                        //.setContentIntent(pendingIntent)
+                        .setAutoCancel(false);
+
+                NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+
+// notificationId is a unique int for each notification that you must define
+                notificationManager.notify(15567, builder.build());
+
+
                 done = true;
                 break;
             case R.id.navigation_translator:
-                selectedFragment = TranslatorFragment.newInstance();
-                translatorFragment = (TranslatorFragment) selectedFragment;
+                selectedFragment = FragmentTranslator.newInstance();
+                translatorFragment = (FragmentTranslator) selectedFragment;
                 retrieveFeedTask = new GetLanguagesTask();
                 retrieveFeedTask.execute("hello");
                 done = true;
@@ -94,9 +145,9 @@ public class MainActivity extends AppCompatActivity implements ItemFragment.OnLi
             default:
 
         }
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.frame_layout, selectedFragment);
-        transaction.commit();
+        //FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        //transaction.replace(R.id.frame_layout, selectedFragment);
+        //transaction.commit();
         return done;
     }
 
@@ -212,7 +263,7 @@ public class MainActivity extends AppCompatActivity implements ItemFragment.OnLi
         @Override
         protected void onPostExecute(ArrayList<WordBlock> wordBlocks) {
             super.onPostExecute(wordBlocks);
-            selectedFragment = ItemFragment.newInstance(1, wordBlocks);
+            selectedFragment = FragmentWordBlocks.newInstance(1, wordBlocks);
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.replace(R.id.frame_layout, selectedFragment);
             transaction.commit();

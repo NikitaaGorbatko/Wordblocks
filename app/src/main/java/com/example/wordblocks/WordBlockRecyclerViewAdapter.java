@@ -6,7 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import com.example.wordblocks.ItemFragment.OnListFragmentInteractionListener;
+import com.example.wordblocks.FragmentWordBlocks.OnListFragmentInteractionListener;
 import java.util.ArrayList;
 
 public class WordBlockRecyclerViewAdapter extends RecyclerView.Adapter<WordBlockRecyclerViewAdapter.ViewHolder> {
@@ -21,7 +21,7 @@ public class WordBlockRecyclerViewAdapter extends RecyclerView.Adapter<WordBlock
     @Override
     @NonNull
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_item, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_word_block, parent, false);
         return new ViewHolder(view);
     }
 
