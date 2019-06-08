@@ -30,7 +30,7 @@ public class WordBlockRecyclerViewAdapter extends RecyclerView.Adapter<WordBlock
         WordBlock wBlock = holder.wordBlockHolderItem = wordBlocksArrayList.get(position);
         holder.nameView.setText(wBlock.name);
         holder.descriptionView.setText(wBlock.description);
-        holder.topicView.setText(wBlock.topic);
+        //holder.topicView.setText(wBlock.topic);
         holder.languageView.setText(wBlock.language);
         holder.costView.setText(wBlock.cost + "");
         holder.viewHolderView.setOnClickListener(new View.OnClickListener() {
@@ -52,7 +52,7 @@ public class WordBlockRecyclerViewAdapter extends RecyclerView.Adapter<WordBlock
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View viewHolderView;
-        public final TextView nameView, descriptionView, costView, languageView, topicView;
+        public final TextView nameView, descriptionView, costView, languageView;
         public WordBlock wordBlockHolderItem;
 
         public ViewHolder(View view) {
@@ -60,7 +60,7 @@ public class WordBlockRecyclerViewAdapter extends RecyclerView.Adapter<WordBlock
             viewHolderView = view;
             nameView = view.findViewById(R.id.name_view);
             descriptionView = view.findViewById(R.id.description_view);
-            topicView = view.findViewById(R.id.topic_view);
+            //topicView = view.findViewById(R.id.topic_view);
             languageView = view.findViewById(R.id.language_view);
             costView = view.findViewById(R.id.cost_view);
         }

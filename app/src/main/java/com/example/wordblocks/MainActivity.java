@@ -3,9 +3,7 @@ package com.example.wordblocks;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -38,9 +36,9 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity implements FragmentWordBlocks.OnListFragmentInteractionListener, BottomNavigationView.OnNavigationItemSelectedListener {
     private GetLanguagesTask retrieveFeedTask;
-    private static final int SEND_LANGUAGES = 3;
-    private static final int SEND_TOPICS = 2;
-    private static final int SEND_BLOCKS = 1;
+    private static final int GET_LANGUAGES = 3;
+    private static final int GET_TOPICS = 2;
+    private static final int GET_BLOCKS = 1;
     private Fragment selectedFragment;
     private FragmentTranslator translatorFragment;
     private BufferedWriter clientWriter;
@@ -55,6 +53,9 @@ public class MainActivity extends AppCompatActivity implements FragmentWordBlock
     private StringBuilder stringBuilder = new StringBuilder();
     private Intent intent;
     private MyReceiver receiver;
+    private ArrayList<String> languages = new ArrayList<>();
+    private ArrayList<WordBlock> blocks = new ArrayList<>();
+
 
 
     @Override
@@ -64,7 +65,6 @@ public class MainActivity extends AppCompatActivity implements FragmentWordBlock
         BottomNavigationView navView = findViewById(R.id.nav_view);
         navView.setOnNavigationItemSelectedListener(this);
         receiver = new MyReceiver();
-
 
         DatabaseHandler db = new DatabaseHandler(this);
         SQLiteDatabase sqlDb = db.getWritableDatabase();
@@ -77,10 +77,15 @@ public class MainActivity extends AppCompatActivity implements FragmentWordBlock
                 .build();
         yandexApi = retrofit.create(YandexApi.class);
         intent = new Intent(this, WordsActivity.class);
-
-        createNotificationChannel();
+        new GetLanguagesTask().execute();
+        new GetWordBlocksTask().execute();
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        setFragment(FragmentWordBlocks.newInstance(blocks));
+    }
 
     private void createNotificationChannel() {
         // Create the NotificationChannel, but only on API 26+ because
@@ -96,69 +101,54 @@ public class MainActivity extends AppCompatActivity implements FragmentWordBlock
             NotificationManager notificationManager = getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(channel);
         }
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "channel1")
+                .setSmallIcon(R.drawable.ic_dashboard_black_24dp)
+                .setContentTitle("Words for today:")
+                //.setContentText("Hello World!\nsdgdgf\nsfdgsdfgsd\nsdfgsdfg\ndfgsd")
+                .setStyle(new NotificationCompat.BigTextStyle().bigText("Much \nlonger \ntext that \ncannot \nfit one \nline..."))
+                .setWhen(3000)
+                //.setPriority(NotificationCompat.PRIORITY_HIGH)
+                // Set the intent that will fire when the user taps the notification
+                //.setContentIntent(pendingIntent)
+                .setAutoCancel(false);
+
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+
+// notificationId is a unique int for each notification that you must define
+        notificationManager.notify(15567, builder.build());
     }
-
-
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         boolean done = false;
-        //Fragment selectedFragment;
         switch (item.getItemId()) {
             case R.id.navigation_blocks_list:
-                GetWordBlocksTask getWordBlocksTask = new GetWordBlocksTask();
-                getWordBlocksTask.execute();
                 done = true;
                 break;
             case R.id.navigation_manager:
-                Intent intent = new Intent(this, MainActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-
-                PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
-
-                NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "channel1")
-                        .setSmallIcon(R.drawable.ic_dashboard_black_24dp)
-                        .setContentTitle("Words for today:")
-                        //.setContentText("Hello World!\nsdgdgf\nsfdgsdfgsd\nsdfgsdfg\ndfgsd")
-                        .setStyle(new NotificationCompat.BigTextStyle().bigText("Much \nlonger \ntext that \ncannot \nfit one \nline..."))
-                        .setWhen(3000)
-                        //.setPriority(NotificationCompat.PRIORITY_HIGH)
-                        // Set the intent that will fire when the user taps the notification
-                        //.setContentIntent(pendingIntent)
-                        .setAutoCancel(false);
-
-                NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
-
-// notificationId is a unique int for each notification that you must define
-                notificationManager.notify(15567, builder.build());
-
-
+                setFragment(FragmentManager.newInstance(blocks, languages));
                 done = true;
                 break;
             case R.id.navigation_translator:
-                selectedFragment = FragmentTranslator.newInstance();
-                translatorFragment = (FragmentTranslator) selectedFragment;
-                retrieveFeedTask = new GetLanguagesTask();
-                retrieveFeedTask.execute("hello");
+                setFragment(FragmentTranslator.newInstance(languages));
                 done = true;
                 break;
             default:
 
         }
-        //FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        //transaction.replace(R.id.frame_layout, selectedFragment);
-        //transaction.commit();
         return done;
     }
 
     @Override
     public void onListFragmentInteraction(WordBlock item) {
         String line = item.data;
-        ArrayList<String> list = new ArrayList<>();
         line = line.substring(1, line.length() - 1);
         for (String token : line.split(","))
             stringBuilder.append(token.concat("\n"));
-
         yandexApi.listRepos(stringBuilder.toString()).enqueue(new Callback<PostModel>() {
             @Override
             public void onResponse(Call<PostModel> call, Response<PostModel> response) {
@@ -171,7 +161,6 @@ public class MainActivity extends AppCompatActivity implements FragmentWordBlock
                 intent.putExtra(TRANSLATIONS, traslations);
                 intent.putExtra(TRANSLATED, translated);
                 startActivity(intent);
-                //Toast.makeText(getApplicationContext(), traslations[1], Toast.LENGTH_LONG).show();
             }
 
             @Override
@@ -179,20 +168,24 @@ public class MainActivity extends AppCompatActivity implements FragmentWordBlock
                 Toast.makeText(getApplicationContext(), call.toString() + " " + t.getMessage(),Toast.LENGTH_LONG).show();
             }
         });
-        //Toast.makeText(this, stringBuilder, Toast.LENGTH_LONG).show();
     }
 
-    class GetLanguagesTask extends AsyncTask<String, Void, ArrayList<String>> {
+    private void setFragment(Fragment fragment) {
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.frame_layout, fragment);
+        transaction.commit();
+    }
 
+    class GetLanguagesTask extends AsyncTask<Void, Void, ArrayList<String>> {
         @Override
-        protected ArrayList<String> doInBackground(String... strings) {
+        protected ArrayList<String> doInBackground(Void... voids) {
             String inputLine;
-            ArrayList<String> languagesList = new ArrayList<String>();
+            ArrayList<String> languagesList = new ArrayList<>();
             try {
                 clientSocket = new Socket(HOST, PORT);
                 clientReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
                 clientWriter = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
-                clientWriter.write(SEND_LANGUAGES);
+                clientWriter.write(GET_LANGUAGES);
                 clientWriter.flush();
                 while ((inputLine = clientReader.readLine()) != null) {
                     languagesList.add(inputLine);
@@ -209,8 +202,10 @@ public class MainActivity extends AppCompatActivity implements FragmentWordBlock
         @Override
         protected void onPostExecute(ArrayList<String> array) {
             super.onPostExecute(array);
-            translatorFragment.setSpinnerList(array);
+            languages = array;
+            setFragment(FragmentTranslator.newInstance(array));
         }
+
     }
 
     class GetWordBlocksTask extends AsyncTask<Void, Void, ArrayList<WordBlock>> {
@@ -231,7 +226,7 @@ public class MainActivity extends AppCompatActivity implements FragmentWordBlock
                 clientSocket = new Socket(HOST, PORT);
                 clientReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
                 clientWriter = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
-                clientWriter.write(SEND_BLOCKS);
+                clientWriter.write(GET_BLOCKS);
                 clientWriter.flush();
                 while ((inputLine = clientReader.readLine()) != null) {
                     stringBuilder.append(inputLine);
@@ -263,11 +258,10 @@ public class MainActivity extends AppCompatActivity implements FragmentWordBlock
         @Override
         protected void onPostExecute(ArrayList<WordBlock> wordBlocks) {
             super.onPostExecute(wordBlocks);
-            selectedFragment = FragmentWordBlocks.newInstance(1, wordBlocks);
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.replace(R.id.frame_layout, selectedFragment);
-            transaction.commit();
-        }
+            blocks = wordBlocks;
+            setFragment(FragmentWordBlocks.newInstance(wordBlocks));
 
+        }
     }
+
 }

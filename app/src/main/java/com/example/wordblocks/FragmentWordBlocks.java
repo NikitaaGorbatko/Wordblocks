@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,9 +22,7 @@ public class FragmentWordBlocks extends Fragment {
     public FragmentWordBlocks() {
     }
 
-    // TODO: Customize parameter initialization
-    @SuppressWarnings("unused")
-    public static FragmentWordBlocks newInstance(int columnCount, ArrayList<WordBlock> wordBlocks) {
+    public static FragmentWordBlocks newInstance(ArrayList<WordBlock> wordBlocks) {
         FragmentWordBlocks fragment = new FragmentWordBlocks();
         Bundle args = new Bundle();
         args.putSerializable(ARG_BLOCK_ITEMS, wordBlocks);
@@ -43,7 +42,7 @@ public class FragmentWordBlocks extends Fragment {
         View view = inflater.inflate(R.layout.fragment_word_blocks_list, container, false);
         if (view instanceof RecyclerView) {
             recyclerView = (RecyclerView) view;
-            recyclerView.setLayoutManager(new GridLayoutManager(view.getContext(), 2));
+            recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
             recyclerView.setAdapter(new WordBlockRecyclerViewAdapter(localWordBlocks, mListener));
         }
         return view;
@@ -65,12 +64,8 @@ public class FragmentWordBlocks extends Fragment {
         mListener = null;
     }
 
-    public void setDummyItems(ArrayList<WordBlock> wordBlocks) {
-        recyclerView.setAdapter(new WordBlockRecyclerViewAdapter(wordBlocks, mListener));
-    }
 
     public interface OnListFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onListFragmentInteraction(WordBlock item);
     }
 }

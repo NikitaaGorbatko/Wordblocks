@@ -14,8 +14,10 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:background="@drawable/shape"
+        android:background="@color/cardview_dark_background"
         android:ems="10"
+        android:textColor="@color/cardview_light_background"
+        android:textColorHint="@color/cardview_light_background"
         android:gravity="start|top"
         android:hint="@string/title_edit_text"
         android:inputType="textMultiLine"
@@ -31,8 +33,10 @@
         android:layout_width="0dp"
         android:layout_height="@dimen/edit_text_height"
         android:layout_marginTop="12dp"
-        android:background="@drawable/shape"
+        android:background="@color/cardview_dark_background"
         android:ems="10"
+        android:textColor="@color/cardview_light_background"
+        android:textColorHint="@color/cardview_light_background"
         android:gravity="start|top"
         android:hint="@string/title_edit_translation"
         android:inputType="textMultiLine"
@@ -78,5 +82,19 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:textColor="#000000"
+        android:textSize="@dimen/edit_text_size"
+        android:text="Translation powerd by Yandex"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </android.support.constraint.ConstraintLayout>
