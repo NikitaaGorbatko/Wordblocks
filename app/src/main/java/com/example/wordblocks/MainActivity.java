@@ -3,7 +3,9 @@ package com.example.wordblocks;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -50,11 +52,14 @@ public class MainActivity extends AppCompatActivity implements FragmentWordBlock
     private Retrofit retrofit;
     public static final String TRANSLATIONS = "translations";
     public static final String TRANSLATED = "translated";
-    private StringBuilder stringBuilder = new StringBuilder();
-    private Intent intent;
+    public static final String SHARED_LANGUAGE_KEY = "language";
+    public static final String DAILY_WORDS_COUNT_KEY = "count_key";
+    public static final String CHOSED_WORD_BLOCK_KEY = "word_block_key";
+    public static final String DEFAULT_VALUE = "";
     private MyReceiver receiver;
     private ArrayList<String> languages = new ArrayList<>();
     private ArrayList<WordBlock> blocks = new ArrayList<>();
+    private SharedPreferences sharedPreferences;
 
 
 
@@ -69,14 +74,18 @@ public class MainActivity extends AppCompatActivity implements FragmentWordBlock
         DatabaseHandler db = new DatabaseHandler(this);
         SQLiteDatabase sqlDb = db.getWritableDatabase();
         //loclalDB is required
-        //Broadcast notificator is reguired
+        //Broadcast notificator is reguired???
+        //Feature of choosing a language key instead of language name.......
+
+        sharedPreferences = this.getPreferences(Context.MODE_PRIVATE);
+        String msg = sharedPreferences.getString(SHARED_LANGUAGE_KEY, "");
+        Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
 
         retrofit = new Retrofit.Builder()
                 .baseUrl("https://translate.yandex.net/api/v1.5/tr.json/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         yandexApi = retrofit.create(YandexApi.class);
-        intent = new Intent(this, WordsActivity.class);
         new GetLanguagesTask().execute();
         new GetWordBlocksTask().execute();
     }
@@ -127,6 +136,7 @@ public class MainActivity extends AppCompatActivity implements FragmentWordBlock
         boolean done = false;
         switch (item.getItemId()) {
             case R.id.navigation_blocks_list:
+                setFragment(FragmentWordBlocks.newInstance(blocks));
                 done = true;
                 break;
             case R.id.navigation_manager:
@@ -134,6 +144,7 @@ public class MainActivity extends AppCompatActivity implements FragmentWordBlock
                 done = true;
                 break;
             case R.id.navigation_translator:
+                System.out.println(languages.get(1));
                 setFragment(FragmentTranslator.newInstance(languages));
                 done = true;
                 break;
@@ -145,10 +156,18 @@ public class MainActivity extends AppCompatActivity implements FragmentWordBlock
 
     @Override
     public void onListFragmentInteraction(WordBlock item) {
+        final StringBuilder stringBuilder = new StringBuilder();
+        final Intent intent = new Intent(this, WordsActivity.class);
         String line = item.data;
         line = line.substring(1, line.length() - 1);
-        for (String token : line.split(","))
+        for (String token : line.split(",")) {
             stringBuilder.append(token.concat("\n"));
+            if (stringBuilder.length() > 9960)
+                break;//ыыыыыыыыыыыыыыыыыыыыыыыыыыыыыыыыыы
+        }
+
+
+
         yandexApi.listRepos(stringBuilder.toString()).enqueue(new Callback<PostModel>() {
             @Override
             public void onResponse(Call<PostModel> call, Response<PostModel> response) {

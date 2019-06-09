@@ -24,7 +24,7 @@ public class FragmentTranslator extends Fragment {
     private Button translateButton, saveTranslationButton;
     private YandexApi yandexApi;
     private Retrofit retrofit;
-    private Spinner spinner;
+    //private Spinner spinner;
     private Context context;
     private ArrayList<String> internalLanguagesList;
     private static final String ARG_LANGUAGES = "languages";
@@ -60,10 +60,10 @@ public class FragmentTranslator extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View fragmentView = inflater.inflate(R.layout.fragment_translator, container, false);
         context = inflater.getContext();
-        spinner = fragmentView.findViewById(R.id.spinner_languages);
-        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, internalLanguagesList);
-        spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(spinnerArrayAdapter);
+        //spinner = fragmentView.findViewById(R.id.spinner_languages);
+        //ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, internalLanguagesList);
+        //spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        //spinner.setAdapter(spinnerArrayAdapter);
         wordEditText = fragmentView.findViewById(R.id.edit_enter_text);
         translationEditText = fragmentView.findViewById(R.id.edit_translation_text);
         translateButton = fragmentView.findViewById(R.id.button_translate);

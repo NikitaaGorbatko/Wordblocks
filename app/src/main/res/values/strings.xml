@@ -10,6 +10,7 @@
     <string name="topic_view">topic:</string>
     <string name="language_view">language:</string>
     <string name="cost_view">cost:</string>
+    <string name="button_save_manager_state">Save this state</string>
 
 
     <!-- TODO: Remove or change this placeholder text -->
@@ -29,4 +30,6 @@
         <item>9</item>
         <item>10</item>
     </string-array>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="add_widget">Add widget</string>
 </resources>
