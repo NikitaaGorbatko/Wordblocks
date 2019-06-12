@@ -22,15 +22,15 @@ import java.util.Objects;
 public class FragmentManager extends Fragment{
     private static final String ARG_BLOCKS = "blocks";
     private static final String ARG_LANGUAGES = "languages";
-    private ArrayList<WordBlock> wordBlocks;
-    private ArrayList<String> languages = new ArrayList<>();
-    private Spinner spinnerWordBlocks;
-    private ListView listViewNative, listViewGoal;
     private static final int words3 = 3;
     private static final int words5 = 5;
     private static final int words7 = 7;
     private static final int words10 = 10;
     private static final int words15 = 15;
+    private ArrayList<WordBlock> wordBlocks;
+    private ArrayList<String> languages = new ArrayList<>();
+    private Spinner spinnerWordBlocks;
+    private ListView listViewNative, listViewGoal;
     private RadioGroup radioGroup;
     private boolean saved = false;
 
@@ -72,7 +72,6 @@ public class FragmentManager extends Fragment{
         listViewGoal = view.findViewById(R.id.list_goal_languages);
         listViewNative.setAdapter(new ArrayAdapter<>(inflater.getContext(), android.R.layout.simple_list_item_single_choice, languages));
         listViewGoal.setAdapter(new ArrayAdapter<>(inflater.getContext(), android.R.layout.simple_list_item_single_choice, languages));
-
 
         final SharedPreferences sharedPreferences = Objects.requireNonNull(getActivity()).getSharedPreferences(MainActivity.SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
         final String savedGoalLang = sharedPreferences.getString(MainActivity.SHARED_GOAL_LANGUAGE_KEY, MainActivity.DEFAULT_VALUE);
@@ -116,7 +115,7 @@ public class FragmentManager extends Fragment{
         }
 
         for (int i = 0; i < wordBlocks.size(); i++) {
-            if (wordBlocks.get(i).name.equals(savedBlock)) {
+            if (wordBlocks.get(i).getName().equals(savedBlock)) {
                 spinnerWordBlocks.setSelection(i);
             }
         }
@@ -169,8 +168,8 @@ public class FragmentManager extends Fragment{
         editor.putString(MainActivity.SHARED_GOAL_LANGUAGE_KEY, (String) listViewGoal.getItemAtPosition(listViewGoal.getCheckedItemPosition()));
         editor.putString(MainActivity.SHARED_NATIVE_LANGUAGE_KEY, (String) listViewNative.getItemAtPosition(listViewNative.getCheckedItemPosition()));
         editor.putInt(MainActivity.DAILY_WORDS_COUNT_KEY, amount);
-        editor.putString(MainActivity.CHOSED_WORD_BLOCK_KEY, wordBlock.name);
-        editor.putString(MainActivity.DAILY_WORDS_SET_KEY, wordBlock.data);
+        editor.putString(MainActivity.CHOSED_WORD_BLOCK_KEY, wordBlock.getName());
+        editor.putString(MainActivity.DAILY_WORDS_SET_KEY, wordBlock.getData());
         editor.apply();
 
         final Intent intent = new Intent(getActivity().getApplicationContext(), WidgetWords.class);

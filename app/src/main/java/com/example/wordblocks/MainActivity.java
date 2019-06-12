@@ -59,6 +59,7 @@ public class MainActivity extends AppCompatActivity implements FragmentWordBlock
     private ArrayList<Language> languages = new ArrayList<>();
     private ArrayList<WordBlock> blocks = new ArrayList<>();
     private SharedPreferences sharedPreferences;
+    private SQLiteDatabase sqlDb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,7 +69,7 @@ public class MainActivity extends AppCompatActivity implements FragmentWordBlock
         navView.setOnNavigationItemSelectedListener(this);
 
         DatabaseHandler db = new DatabaseHandler(this);
-        SQLiteDatabase sqlDb = db.getWritableDatabase();
+        sqlDb = db.getWritableDatabase();
         //loclalDB is required
         //Broadcast notificator is reguired???
         //Feature of choosing a language key instead of language name.......
@@ -151,7 +152,7 @@ public class MainActivity extends AppCompatActivity implements FragmentWordBlock
     public void onListFragmentInteraction(WordBlock item) {
         final StringBuilder stringBuilder = new StringBuilder();
         final Intent intent = new Intent(this, WordsActivity.class);
-        String line = item.data;
+        String line = item.getData();
         line = line.substring(1, line.length() - 1);
         for (String token : line.split(",")) {
             stringBuilder.append(token.concat("\n"));
@@ -226,8 +227,15 @@ public class MainActivity extends AppCompatActivity implements FragmentWordBlock
         @Override
         protected void onPostExecute(ArrayList<Language> array) {
             super.onPostExecute(array);
+            StringBuilder stringBuilder = new StringBuilder();
             languages = array;
+            Language localLang;
             setFragment(FragmentTranslator.newInstance(array));
+            for (int i = 0; i < array.size(); i++) {
+                localLang = array.get(i);
+                stringBuilder.append("INSERT INTO languages (lang, keyx) VALUES ('" + localLang.getLanguage() + "', '" + localLang.getKey() +"');\n");
+            }
+            sqlDb.execSQL(stringBuilder.toString());
         }
 
     }
@@ -284,6 +292,22 @@ public class MainActivity extends AppCompatActivity implements FragmentWordBlock
             super.onPostExecute(wordBlocks);
             blocks = wordBlocks;
             setFragment(FragmentWordBlocks.newInstance(wordBlocks));
+            StringBuilder stringBuilder = new StringBuilder();
+            WordBlock localBlock;
+
+
+            for (int i = 0; i < wordBlocks.size(); i++) {
+                localBlock = wordBlocks.get(i);
+                stringBuilder.append("INSERT INTO word_sets (lang_id, topic_id, name, description, data, cost) VALUES ('" +
+                        localBlock.getLanguage() + "','" +
+                        localBlock.getTopic() +"', '"+
+                        localBlock.getName() +"', '" +
+                        localBlock.getDescription() + "', '" +
+                        localBlock.getData() + "', '" +
+                        localBlock.getCost() + "');\n");
+            }
+            sqlDb.execSQL(stringBuilder.toString());
+
         }
     }
 

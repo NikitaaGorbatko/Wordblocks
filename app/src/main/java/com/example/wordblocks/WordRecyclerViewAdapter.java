@@ -25,8 +25,8 @@ public class WordRecyclerViewAdapter extends RecyclerView.Adapter<WordRecyclerVi
     @Override
     public void onBindViewHolder(@NonNull final WordRecyclerViewAdapter.WordsHolder viewHolder, int position) {
         Word word = viewHolder.word = words.get(position);
-        viewHolder.translated.setText(word.word);
-        viewHolder.translation.setText(word.translation);
+        viewHolder.translated.setText(word.getWord());
+        viewHolder.translation.setText(word.getTranslation());
     }
 
 

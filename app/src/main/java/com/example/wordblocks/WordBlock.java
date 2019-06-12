@@ -3,9 +3,9 @@ package com.example.wordblocks;
 import java.io.Serializable;
 
 public class WordBlock implements Serializable{
-    public final String name, description, language, id, topic;
-    public final String data;
-    public final int cost;
+    private final String name, description, language, id, topic;
+    private final String data;
+    private final int cost;
 
     public WordBlock(String id, String name, String description, String topic, int cost, String language, String data) {
         this.id = id;
@@ -15,6 +15,34 @@ public class WordBlock implements Serializable{
         this.cost = cost;
         this.language = language;
         this.data = data;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public String getTopic() {
+        return topic;
+    }
+
+    public String getData() {
+        return data;
+    }
+
+    public int getCost() {
+        return cost;
     }
 
     @Override

@@ -28,11 +28,11 @@ public class WordBlockRecyclerViewAdapter extends RecyclerView.Adapter<WordBlock
     @Override
     public void onBindViewHolder(final @NonNull ViewHolder holder, int position) {
         WordBlock wBlock = holder.wordBlockHolderItem = wordBlocksArrayList.get(position);
-        holder.nameView.setText(wBlock.name);
-        holder.descriptionView.setText(wBlock.description);
+        holder.nameView.setText(wBlock.getName());
+        holder.descriptionView.setText(wBlock.getDescription());
         //holder.topicView.setText(wBlock.topic);
-        holder.languageView.setText(wBlock.language);
-        holder.costView.setText(wBlock.cost + "");
+        holder.languageView.setText(wBlock.getLanguage());
+        holder.costView.setText(wBlock.getCost() + "");
         holder.viewHolderView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -5,7 +5,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 public class DatabaseHandler extends SQLiteOpenHelper {
-    // If you change the database schema, you must increment the database version.
     public static final int DATABASE_VERSION = 1;
     public static final String DATABASE_NAME = "local.db";
 
@@ -15,7 +14,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE IF NOT EXISTS languages (" +
-                "lang VARCHAR(100) PRIMARY KEY);\n");
+                "lang VARCHAR(100) PRIMARY KEY," +
+                "keyx VARCHAR(5));\n");
 
         db.execSQL("CREATE TABLE IF NOT EXISTS topics (" +
                 "top VARCHAR(100) UNIQUE NOT NULL PRIMARY KEY);\n");
