@@ -24,61 +24,61 @@
         android:layout_width="0dp"
         android:layout_height="@dimen/edit_text_height"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="32dp"
         android:layout_marginEnd="8dp"
-        android:background="@color/cardview_dark_background"
+        android:layout_marginBottom="8dp"
+        android:background="@color/cardBackground"
         android:ems="10"
         android:gravity="start|top"
         android:hint="@string/title_edit_text"
         android:inputType="textMultiLine"
         android:padding="5dp"
-        android:textColor="@color/cardview_light_background"
-        android:textColorHint="@color/cardview_light_background"
-        android:textSize="@dimen/edit_text_size"
+        android:textColor="@android:color/black"
+        android:textColorHint="@android:color/black"
+        android:textSize="@dimen/title_text_size"
+        app:layout_constraintBottom_toTopOf="@+id/edit_translation_text"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toStartOf="parent" />
 
 
     <EditText
         android:id="@+id/edit_translation_text"
         android:layout_width="0dp"
         android:layout_height="@dimen/edit_text_height"
-        android:layout_marginTop="12dp"
-        android:background="@color/cardview_dark_background"
+        android:layout_marginBottom="8dp"
+        android:background="@color/cardBackground"
         android:ems="10"
-        android:textColor="@color/cardview_light_background"
-        android:textColorHint="@color/cardview_light_background"
         android:gravity="start|top"
         android:hint="@string/title_edit_translation"
         android:inputType="textMultiLine"
-        android:textSize="@dimen/edit_text_size"
         android:padding="5dp"
+        android:textColor="@android:color/black"
+        android:textColorHint="@android:color/black"
+        android:textSize="@dimen/title_text_size"
+        app:layout_constraintBottom_toTopOf="@+id/button_save_translation"
         app:layout_constraintEnd_toEndOf="@+id/edit_enter_text"
-        app:layout_constraintStart_toStartOf="@+id/edit_enter_text"
-        app:layout_constraintTop_toBottomOf="@+id/edit_enter_text" />
+        app:layout_constraintStart_toStartOf="@+id/edit_enter_text" />
 
     <Button
         android:id="@+id/button_translate"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
         android:text="@string/title_button_translate"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edit_translation_text" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/button_save_translation"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
         android:text="@string/title_button_save"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/button_translate"
-        app:layout_constraintTop_toBottomOf="@+id/edit_translation_text" />
+        app:layout_constraintStart_toEndOf="@+id/button_translate" />
 
     <TextView
         android:id="@+id/textView2"
@@ -87,14 +87,11 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        android:text="Translation powerd by Yandex"
-        android:textColor="#000000"
-        android:textSize="@dimen/edit_text_size"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:text="@string/translation_powerd_by_yandex"
+        android:textColor="@android:color/black"
+        android:textSize="@dimen/title_text_size"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button_save_translation"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintTop_toTopOf="parent" />
 
 </android.support.constraint.ConstraintLayout>

@@ -1,8 +1,5 @@
 package com.example.wordblocks;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import java.io.Serializable;
 
 public class Word implements Serializable{

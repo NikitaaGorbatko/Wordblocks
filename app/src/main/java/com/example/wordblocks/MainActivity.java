@@ -37,31 +37,28 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity implements FragmentWordBlocks.OnListFragmentInteractionListener, BottomNavigationView.OnNavigationItemSelectedListener {
-    private GetLanguagesTask retrieveFeedTask;
-    private static final int GET_LANGUAGES = 3;
-    private static final int GET_TOPICS = 2;
-    private static final int GET_BLOCKS = 1;
-    private Fragment selectedFragment;
-    private FragmentTranslator translatorFragment;
-    private BufferedWriter clientWriter;
-    private BufferedReader clientReader;
-    private Socket clientSocket;
-    private final String HOST = "192.168.0.103";
-    private final int PORT = 4004;
-    private YandexApi yandexApi;
-    private Retrofit retrofit;
     public static final String TRANSLATIONS = "translations";
     public static final String TRANSLATED = "translated";
-    public static final String SHARED_LANGUAGE_KEY = "language";
+    public static final String SHARED_GOAL_LANGUAGE_KEY = "language";
     public static final String DAILY_WORDS_COUNT_KEY = "count_key";
     public static final String CHOSED_WORD_BLOCK_KEY = "word_block_key";
     public static final String DEFAULT_VALUE = "";
-    private MyReceiver receiver;
-    private ArrayList<String> languages = new ArrayList<>();
+    public static final String DAILY_WORDS_SET_KEY = "daily_set";
+    public static final String SHARED_PREFERENCES_NAME = "shared_name";
+    public static final String SHARED_NATIVE_LANGUAGE_KEY= "shared_name";
+    private static final int GET_LANGUAGES = 3;
+    private static final int GET_TOPICS = 2;
+    private static final int GET_BLOCKS = 1;
+    private static final String HOST = "192.168.0.103";
+    private static final int PORT = 4004;
+    private YandexApi yandexApi;
+    private Retrofit retrofit;
+    private BufferedWriter clientWriter;
+    private BufferedReader clientReader;
+    private Socket clientSocket;
+    private ArrayList<Language> languages = new ArrayList<>();
     private ArrayList<WordBlock> blocks = new ArrayList<>();
     private SharedPreferences sharedPreferences;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,7 +66,6 @@ public class MainActivity extends AppCompatActivity implements FragmentWordBlock
         setContentView(R.layout.activity_main);
         BottomNavigationView navView = findViewById(R.id.nav_view);
         navView.setOnNavigationItemSelectedListener(this);
-        receiver = new MyReceiver();
 
         DatabaseHandler db = new DatabaseHandler(this);
         SQLiteDatabase sqlDb = db.getWritableDatabase();
@@ -77,9 +73,8 @@ public class MainActivity extends AppCompatActivity implements FragmentWordBlock
         //Broadcast notificator is reguired???
         //Feature of choosing a language key instead of language name.......
 
-        sharedPreferences = this.getPreferences(Context.MODE_PRIVATE);
-        String msg = sharedPreferences.getString(SHARED_LANGUAGE_KEY, "");
-        Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
+        sharedPreferences = this.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+        String msg = sharedPreferences.getString(SHARED_GOAL_LANGUAGE_KEY, DEFAULT_VALUE);
 
         retrofit = new Retrofit.Builder()
                 .baseUrl("https://translate.yandex.net/api/v1.5/tr.json/")
@@ -144,12 +139,10 @@ public class MainActivity extends AppCompatActivity implements FragmentWordBlock
                 done = true;
                 break;
             case R.id.navigation_translator:
-                System.out.println(languages.get(1));
                 setFragment(FragmentTranslator.newInstance(languages));
                 done = true;
                 break;
             default:
-
         }
         return done;
     }
@@ -163,10 +156,8 @@ public class MainActivity extends AppCompatActivity implements FragmentWordBlock
         for (String token : line.split(",")) {
             stringBuilder.append(token.concat("\n"));
             if (stringBuilder.length() > 9960)
-                break;//ыыыыыыыыыыыыыыыыыыыыыыыыыыыыыыыыыы
+                break;//for tests
         }
-
-
 
         yandexApi.listRepos(stringBuilder.toString()).enqueue(new Callback<PostModel>() {
             @Override
@@ -175,8 +166,8 @@ public class MainActivity extends AppCompatActivity implements FragmentWordBlock
                 if (response.body() != null) {
                     outString = response.body().getText().get(0);
                 }
-                String[] traslations  = outString.split("\n");
-                String[] translated  = stringBuilder.toString().split("\n");
+                final String[] traslations  = outString.split("\n");
+                final String[] translated  = stringBuilder.toString().split("\n");
                 intent.putExtra(TRANSLATIONS, traslations);
                 intent.putExtra(TRANSLATED, translated);
                 startActivity(intent);
@@ -195,11 +186,15 @@ public class MainActivity extends AppCompatActivity implements FragmentWordBlock
         transaction.commit();
     }
 
-    class GetLanguagesTask extends AsyncTask<Void, Void, ArrayList<String>> {
+    class GetLanguagesTask extends AsyncTask<Void, Void, ArrayList<Language>> {
+
+        private static final String LANG_NAME = "lang";
+        private static final String LANG_KEY = "lang_key";
         @Override
-        protected ArrayList<String> doInBackground(Void... voids) {
+        protected ArrayList<Language> doInBackground(Void... voids) {
             String inputLine;
-            ArrayList<String> languagesList = new ArrayList<>();
+            ArrayList<Language> languagesList = new ArrayList<>();
+            StringBuilder stringBuilder = new StringBuilder();
             try {
                 clientSocket = new Socket(HOST, PORT);
                 clientReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
@@ -207,11 +202,21 @@ public class MainActivity extends AppCompatActivity implements FragmentWordBlock
                 clientWriter.write(GET_LANGUAGES);
                 clientWriter.flush();
                 while ((inputLine = clientReader.readLine()) != null) {
-                    languagesList.add(inputLine);
+                    stringBuilder.append(inputLine);
                 }
                 clientWriter.close();
                 clientReader.close();
                 clientSocket.close();
+                try {
+                    JSONArray languageJsonArray = new JSONArray(stringBuilder.toString());
+                    for(int i = 0; i < languageJsonArray.length(); i++) {
+                        JSONObject localLanguage = languageJsonArray.getJSONObject(i);
+                        languagesList.add(new Language(localLanguage.getString(LANG_NAME),
+                                localLanguage.getString(LANG_KEY)));
+                    }
+                } catch (JSONException ex) {
+                    ex.printStackTrace();
+                }
             } catch (IOException ex) {
                 Log.d("LOG", "gfcjgchghg\n\n\n" + ex.getMessage());
             }
@@ -219,7 +224,7 @@ public class MainActivity extends AppCompatActivity implements FragmentWordBlock
         }
 
         @Override
-        protected void onPostExecute(ArrayList<String> array) {
+        protected void onPostExecute(ArrayList<Language> array) {
             super.onPostExecute(array);
             languages = array;
             setFragment(FragmentTranslator.newInstance(array));
@@ -239,7 +244,7 @@ public class MainActivity extends AppCompatActivity implements FragmentWordBlock
         @Override
         protected ArrayList<WordBlock> doInBackground(Void... voids) {
             String inputLine;
-            StringBuilder stringBuilder = new StringBuilder();;
+            StringBuilder stringBuilder = new StringBuilder();
             ArrayList<WordBlock> wordBlocks = new ArrayList<>();
             try {
                 clientSocket = new Socket(HOST, PORT);
@@ -279,7 +284,6 @@ public class MainActivity extends AppCompatActivity implements FragmentWordBlock
             super.onPostExecute(wordBlocks);
             blocks = wordBlocks;
             setFragment(FragmentWordBlocks.newInstance(wordBlocks));
-
         }
     }
 

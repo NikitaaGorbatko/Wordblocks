@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     android:layout_margin="4dp"
     android:orientation="horizontal"
-    app:cardBackgroundColor="@color/cardview_dark_background"
+    app:cardBackgroundColor="@color/cardBackground"
     app:cardCornerRadius="5dp"
     app:cardElevation="5dp">
 
@@ -23,9 +23,8 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:gravity="center"
-            android:textAppearance="?attr/textAppearanceListItem"
-            android:textColor="@color/cardview_light_background"
-            android:textSize="20sp"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/title_text_size"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -37,7 +36,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
-            android:textColor="@color/cardview_light_background"
+            android:textColor="@android:color/black"
             android:gravity="center"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -62,8 +61,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:textAppearance="?attr/textAppearanceListItem"
-                android:textColor="@color/cardview_light_background" />
+                android:textColor="@android:color/black" />
 
             <TextView
                 android:id="@+id/cost_view"
@@ -71,8 +69,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:gravity="end"
-                android:textAppearance="?attr/textAppearanceListItem"
-                android:textColor="@color/cardview_light_background" />
+                android:textColor="@android:color/black" />
 
         </LinearLayout>
 

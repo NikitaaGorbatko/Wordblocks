@@ -6,16 +6,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import java.util.ArrayList;
 
 public class WordRecyclerViewAdapter extends RecyclerView.Adapter<WordRecyclerViewAdapter.WordsHolder> {
     private final ArrayList<Word> words;
-    private final WordsActivity.OnWordInteractionListener fragmentInteractionListener;
 
-    public WordRecyclerViewAdapter(ArrayList<Word> words, WordsActivity.OnWordInteractionListener fragmentInteractionListener) {
+    public WordRecyclerViewAdapter(ArrayList<Word> words) {
         this.words = words;
-        this.fragmentInteractionListener = fragmentInteractionListener;
     }
 
     @NonNull
@@ -27,20 +24,9 @@ public class WordRecyclerViewAdapter extends RecyclerView.Adapter<WordRecyclerVi
 
     @Override
     public void onBindViewHolder(@NonNull final WordRecyclerViewAdapter.WordsHolder viewHolder, int position) {
-        Word worda = viewHolder.word = words.get(position);
-        viewHolder.translated.setText(worda.word);
-        viewHolder.translation.setText(worda.translation);
-        viewHolder.viewHolderView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (null != fragmentInteractionListener) {
-                    fragmentInteractionListener.onListFragmentInteraction(viewHolder.word);
-                    //Notify the active callbacks interface (the activity, if the
-                    //fragment is attached to one) that an item has been selected.
-                    //fragmentInteractionListener.onListFragmentInteraction(viewHolder.word);
-                }
-            }
-        });
+        Word word = viewHolder.word = words.get(position);
+        viewHolder.translated.setText(word.word);
+        viewHolder.translation.setText(word.translation);
     }
 
 

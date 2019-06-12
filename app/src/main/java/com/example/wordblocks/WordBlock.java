@@ -2,7 +2,7 @@ package com.example.wordblocks;
 
 import java.io.Serializable;
 
-public class WordBlock  implements  Serializable{
+public class WordBlock implements Serializable{
     public final String name, description, language, id, topic;
     public final String data;
     public final int cost;

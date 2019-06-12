@@ -14,13 +14,11 @@ import java.util.ArrayList;
 
 public class FragmentWordBlocks extends Fragment {
     private static final String ARG_BLOCK_ITEMS = "blocks";
-    private RecyclerView recyclerView;
     private ArrayList<WordBlock> localWordBlocks;
     private OnListFragmentInteractionListener mListener;
 
 
-    public FragmentWordBlocks() {
-    }
+    public FragmentWordBlocks() { }
 
     public static FragmentWordBlocks newInstance(ArrayList<WordBlock> wordBlocks) {
         FragmentWordBlocks fragment = new FragmentWordBlocks();
@@ -40,6 +38,7 @@ public class FragmentWordBlocks extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_word_blocks_list, container, false);
+        RecyclerView recyclerView;
         if (view instanceof RecyclerView) {
             recyclerView = (RecyclerView) view;
             recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
